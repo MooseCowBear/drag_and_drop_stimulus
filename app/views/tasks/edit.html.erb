@@ -1,10 +1,12 @@
-<div class="">
+<div class="md:w-4/6 flex flex-col items-center gap-3">
   <h1 class="font-bold text-4xl">Edit Task</h1>
-
-  <%= turbo_frame_tag dom_id(@task) do %>
-    <%= render "form", task: @task %>
-  <% end %>
-
-  <%= link_to "See this task", @task, class: "" %>
-  <%= link_to "Back to tasks", tasks_path, class: "" %>
+  <div class="w-full py-5 px-7 border-l-4 border-slate-900 shadow-md">
+    <%= turbo_frame_tag dom_id(@task) do %>
+      <%= render "form", task: @task %>
+    <% end %>
+  </div>
+  <div class="w-full flex justify-between">
+    <%= link_to "See this task", @task, class: "uppercase tracking-wide cursor-pointer" %>
+    <%= link_to "Back to tasks", tasks_path, class: "uppercase tracking-wide cursor-pointer" %>
+  </div>
 </div>
