@@ -21,4 +21,5 @@
       </div>
     </div>
   <% end %>
+  <%= button_to "delete", task_path(task), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' }, class: "float-right text-sm pt-2" } %>
 </li>

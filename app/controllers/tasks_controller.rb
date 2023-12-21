@@ -18,9 +18,11 @@ class TasksController < ApplicationController
   def create
     @task = Task.new(task_params)
 
+    # TODO: if update new form to be in turboframe, update this as well
+
     respond_to do |format|
       if @task.save
-        format.html { redirect_to task_url(@task), notice: "Task was successfully created." }
+        format.html { redirect_to tasks_url, notice: "Task was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
       end
@@ -41,6 +43,11 @@ class TasksController < ApplicationController
 
   def destroy
     @task.destroy
+
+    respond_to do |format|
+      format.turbo_stream { render turbo_stream: turbo_stream.remove("#{helpers.dom_id(@task)}_container") }
+      format.html { redirect_to tasks_url, notice: "Task was successfully destroyed." }
+    end
   end
 
   private
