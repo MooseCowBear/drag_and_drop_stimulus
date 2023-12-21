@@ -1,9 +1,21 @@
 <li id="<%="#{dom_id(task)}_container"%>" class="flex flex-col justify-stretch bg-slate-50 p-5 shadow-md border-l-4 border-slate-900">
   <%= turbo_frame_tag dom_id(task) do %>
     <div class="grid grid-cols-[auto,_1fr] gap-3">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-slate-900 h-6 w-6">
-        <path fill="" d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
-      </svg>
+
+      <% unless task.completed %>
+        <%= button_to update_status_task_path(task, task: { completed: true }), method: :patch do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-slate-900 h-6 w-6">
+            <path fill="" d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+          </svg>
+        <% end %>
+      <% else %>
+        <%= button_to update_status_task_path(task, task: { completed: false }), method: :patch do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-slate-900 h-6 w-6">
+            <path  fill="" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+          </svg>
+        <% end %>
+      <% end %>
+      
       <div class="flex flex-col gap-3 items-stretch">
         <div class="flex gap-2 items-center">
           <h2 class="font-bold"><%= task.title %></h2>

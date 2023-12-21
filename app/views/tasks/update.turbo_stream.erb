@@ -1,3 +1,7 @@
 <%= turbo_stream.replace "#{dom_id(@task)}_container" do %>
-  <%= render "task", task: @task %>
+  <% if request.referrer == tasks_url || request.referrer == root_url %>
+    <%= render "task", task: @task %>
+  <% else %>
+    <%= render "task", { task: @task, show: true } %>
+  <% end %>
 <% end %>

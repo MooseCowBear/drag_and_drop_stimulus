@@ -1,8 +1,8 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :set_task, only: [:show, :edit, :update, :destroy, :update_status]
 
   def index
-    @tasks = Task.all
+    @tasks = Task.incomplete
   end
 
   def show
@@ -50,6 +50,19 @@ class TasksController < ApplicationController
     end
   end
 
+  def update_status
+    @task.update(completed: task_params[:completed])
+    respond_to do |format|
+      if request.referrer == tasks_url || request.referrer == root_url
+        format.turbo_stream { render turbo_stream: turbo_stream.remove("#{helpers.dom_id(@task)}_container") }
+        format.html { redirect_to tasks_path, notice: "Updated task status." }
+      else
+        format.turbo_stream { render :update }
+        format.html { redirect_to task_path(@task), notice: "Updated task status." }
+      end
+    end 
+  end
+
   private
 
   def set_task
@@ -57,6 +70,6 @@ class TasksController < ApplicationController
   end
 
   def task_params
-    params.require(:task).permit(:title, :description, :category, :priority)
+    params.require(:task).permit(:title, :description, :category, :priority, :completed)
   end
 end
