@@ -4,5 +4,10 @@ FactoryBot.define do
     description { "task description" }
     category { 1 }
     priority { 1 }
+    completed { false }
+
+    trait :completed do
+      completed { true }
+    end
   end
 end
