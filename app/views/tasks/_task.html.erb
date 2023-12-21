@@ -1,4 +1,4 @@
-<li id="<%="#{dom_id(task)}_container"%>" class="bg-slate-50 p-5 shadow-md border-l-4 border-slate-900">
+<li id="<%="#{dom_id(task)}_container"%>" class="flex flex-col justify-stretch bg-slate-50 p-5 shadow-md border-l-4 border-slate-900">
   <%= turbo_frame_tag dom_id(task) do %>
     <div class="grid grid-cols-[auto,_1fr] gap-3">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-slate-900 h-6 w-6">
@@ -21,5 +21,8 @@
       </div>
     </div>
   <% end %>
-  <%= button_to "delete", task_path(task), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' }, class: "float-right text-sm pt-2" } %>
+  <% show ||= false %>
+  <% unless show %>
+    <%= button_to "delete", task_path(task), method: :delete, form: { data: { turbo_confirm: 'Are you sure?' }, class: "self-end text-sm pt-2" } %>
+  <% end %>
 </li>

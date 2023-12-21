@@ -1,4 +1,7 @@
-<div>
-  <h1 class="font-bold text-4xl">Tasks#show</h1>
-  <p>Find me in app/views/tasks/show.html.erb</p>
+<div class="md:w-4/6 flex flex-col gap-5">
+  <h1 class="font-bold text-4xl uppercase tracking-wider">Task Details</h1>
+  <ul>
+    <%= render partial: "task", locals: { task: @task, show: true } %>
+  </ul>
+  <%= button_to "delete", task_path(@task), method: :delete, form: { data: { turbo: false }, class: "self-end text-sm" } %>
 </div>
