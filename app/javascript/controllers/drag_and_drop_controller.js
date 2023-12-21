@@ -27,14 +27,15 @@ export default class extends Controller {
   dragEnd(e) {
     e.preventDefault();
 
-    // TODO: finish this
+    // TODO: finish this. This is the event triggered by the dropped elem
   }
 
   drop(e) {
+    // this is the event trigged by the drop target elem
     const dropTarget = this.findDropTarget(
       e.target,
       e.target.getAttribute("data-parent")
-    ); 
+    );
     const draggedItem = document.querySelector(
       `[data-resource-id="${resourceID}"]`
     );
@@ -45,9 +46,12 @@ export default class extends Controller {
 
     this.setNewPosition(dropTarget, draggedItem);
     // find the place that the item ended up
-    newPosition = [...this.element.parentElement.children].indexOf(draggedItem); 
+    // couldn't we return the new position from setNewPosition and then do our fetch here
+    // instead of in drag end????
+    
+    // newPosition = [...this.element.parentElement.children].indexOf(draggedItem);
 
-    e.preventDefault();
+    e.preventDefault(); // here at end or at beginning?
   }
 
   findDropTarget(elem, parentId) {
@@ -58,17 +62,11 @@ export default class extends Controller {
   }
 
   setNewPosition(target, item) {
+    // another option is to add a data attribute for the position and then we can set the new position here as well
     const relativePosition = target.compareDocumentPosition(item);
-    console.log("relative position", relativePosition);
-    if (
-      relativePosition &&
-      relativePosition == Node.DOCUMENT_POSITION_FOLLOWING
-    ) {
+    if (relativePosition == Node.DOCUMENT_POSITION_FOLLOWING) {
       target.insertAdjacentElement("beforebegin", item);
-    } else if (
-      relativePosition &&
-      relativePosition == Node.DOCUMENT_POSITION_PRECEDING
-    ) {
+    } else if (relativePosition == Node.DOCUMENT_POSITION_PRECEDING) {
       target.insertAdjacentElement("afterend", item);
     }
   }

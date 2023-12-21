@@ -5,6 +5,7 @@ FactoryBot.define do
     category { 1 }
     priority { 1 }
     completed { false }
+    position { 0 }
 
     trait :completed do
       completed { true }

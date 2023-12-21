@@ -2,7 +2,7 @@ class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy, :update_status]
 
   def index
-    @tasks = Task.incomplete
+    @tasks = Task.incomplete.order_by_position
   end
 
   def show
@@ -16,7 +16,8 @@ class TasksController < ApplicationController
   end
 
   def create
-    @task = Task.new(task_params)
+    @task = Task.new_with_position(task_params)
+    pp @task
 
     # TODO: if update new form to be in turboframe, update this as well
 

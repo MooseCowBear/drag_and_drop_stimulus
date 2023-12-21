@@ -14,7 +14,7 @@ RSpec.describe Task, type: :model do
   describe ".complete" do
     it "returns completed tasks only" do
       completed_task = create(:task, :completed)
-      incompleted_task = create(:task)
+      incompleted_task = create(:task, position: 1)
       res = Task.complete
       expect(res.length).to eq(1)
       expect(res.first).to eq(completed_task)
@@ -24,7 +24,7 @@ RSpec.describe Task, type: :model do
   describe ".incomplete" do
     it "returns incomplete tasks only" do
       completed_task = create(:task, :completed)
-      incompleted_task = create(:task)
+      incompleted_task = create(:task, position: 1)
       res = Task.incomplete
       expect(res.length).to eq(1)
       expect(res.first).to eq(incompleted_task)
