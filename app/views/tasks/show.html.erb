@@ -1,7 +1,7 @@
 <div class="md:w-4/6 flex flex-col gap-5">
   <h1 class="font-bold text-4xl uppercase tracking-wider">Task Details</h1>
-  <ul>
-    <%= render "task", { task: @task, show: true } %>
-  </ul>
+
+  <%= render "task", { task: @task, show: true } %>
+ 
   <%= button_to "delete", task_path(@task), method: :delete, form: { data: { turbo: false }, class: "self-end text-sm" } %>
 </div>

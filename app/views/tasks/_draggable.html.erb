@@ -1,0 +1,17 @@
+<% drag_actions = "dragstart->drag-and-drop#dragStart 
+                    dragover->drag-and-drop#dragOver 
+                    dragenter->drag-and-drop#dragEnter
+                    drop->drag-and-drop#drop
+                    dragend->drag-and-drop#dragEnd" %>
+
+<%# TEMP CLASSES SO CAN EASILY SEE WHICH ELEMS ARE DRAGGABLE %>
+
+<%= content_tag(:div, class: "bg-pink-500 p-2 draggable", draggable: true, data: {
+    controller: "drag-and-drop",
+    action: drag_actions,
+    resource_id: task.id,
+    url: "/drag/task",
+    parent: "tasks",
+}) do %>
+  <%= render task %>
+<% end %>
