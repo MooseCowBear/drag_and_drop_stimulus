@@ -2,7 +2,6 @@ import { Controller } from "@hotwired/stimulus";
 
 let resourceID;
 let url;
-let newPosition;
 
 // Connects to data-controller="drag-and-drop"
 export default class extends Controller {
@@ -26,12 +25,9 @@ export default class extends Controller {
 
   dragEnd(e) {
     e.preventDefault();
-
-    // TODO: finish this. This is the event triggered by the dropped elem
   }
 
   drop(e) {
-    // this is the event trigged by the drop target elem
     const dropTarget = this.findDropTarget(
       e.target,
       e.target.getAttribute("data-parent")
@@ -44,14 +40,11 @@ export default class extends Controller {
       return true;
     }
 
-    this.setNewPosition(dropTarget, draggedItem);
-    // find the place that the item ended up
-    // couldn't we return the new position from setNewPosition and then do our fetch here
-    // instead of in drag end????
-    
-    // newPosition = [...this.element.parentElement.children].indexOf(draggedItem);
+    const newPosition = this.setNewPosition(dropTarget, draggedItem);
 
-    e.preventDefault(); // here at end or at beginning?
+    const updates = this.getUpdates(draggedItem, newPosition);
+
+    e.preventDefault();
   }
 
   findDropTarget(elem, parentId) {
@@ -62,12 +55,68 @@ export default class extends Controller {
   }
 
   setNewPosition(target, item) {
-    // another option is to add a data attribute for the position and then we can set the new position here as well
+    // returning position of target so we can use it to update the backend
     const relativePosition = target.compareDocumentPosition(item);
     if (relativePosition == Node.DOCUMENT_POSITION_FOLLOWING) {
       target.insertAdjacentElement("beforebegin", item);
     } else if (relativePosition == Node.DOCUMENT_POSITION_PRECEDING) {
       target.insertAdjacentElement("afterend", item);
+    }
+    return parseInt(target.dataset.position);
+  }
+
+  getUpdates(draggedItem, endPosition) {
+    const startPosition = parseInt(draggedItem.dataset.position);
+    const items = [...draggedItem.parentElement.children];
+    const ids = [draggedItem.getAttribute("data-resource-id")];
+    const newPositions = [endPosition];
+
+    console.log(startPosition, endPosition);
+
+    if (startPosition == endPosition) {
+      return null;
+    } else if (startPosition < endPosition) {
+      this.getIdsAndPositions(
+        items,
+        startPosition + 1,
+        endPosition,
+        -1,
+        ids,
+        newPositions
+      );
+    } else {
+      this.getIdsAndPositions(
+        items,
+        endPosition,
+        startPosition - 1,
+        1,
+        ids,
+        newPositions
+      );
+    }
+    return { ids, newPositions };
+  }
+
+  between(lower, higher, val) {
+    if (val >= lower && val <= higher) {
+      return true;
+    }
+    return false;
+  }
+
+  getIdsAndPositions(
+    items,
+    lowerBound,
+    upperBound,
+    offset,
+    idsArr,
+    positionsArr
+  ) {
+    for (let i = 0; i < items.length; i++) {
+      if (this.between(lowerBound, upperBound, items[i].dataset.position)) {
+        idsArr.push(items[i].getAttribute("data-resource-id"));
+        positionsArr.push(parseInt(items[i].dataset.position) + offset);
+      }
     }
   }
 }
