@@ -1,5 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe "tasks/new.html.tailwindcss", type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+RSpec.describe "tasks/new.html.erb", type: :view do
+  it "renders a form" do
+    assign(:task, Task.new)
+    render
+    expect(rendered).to have_content("New Task")
+    expect(rendered).to have_selector("form")
+  end
 end
