@@ -45,4 +45,15 @@ RSpec.describe Task, type: :model do
       expect(Task.maximum(:position)).to eq(0)
     end
   end
+
+  describe ".order_by_position" do
+    it "returns tasks in ascending order of position" do
+      task = create(:task)
+      task1 = create(:task, position: 1)
+      task2 = create(:task, position: 2)
+      res = Task.order_by_position
+      expect(res.first.position).to be <= res.second.position
+      expect(res.second.position).to be <= res.last.position
+    end
+  end
 end
