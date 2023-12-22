@@ -17,7 +17,6 @@ class TasksController < ApplicationController
 
   def create
     @task = Task.new_with_position(task_params)
-    pp @task
 
     # TODO: if update new form to be in turboframe, update this as well
 

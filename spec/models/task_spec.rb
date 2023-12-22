@@ -30,4 +30,19 @@ RSpec.describe Task, type: :model do
       expect(res.first).to eq(incompleted_task)
     end
   end 
+
+  describe ".new_with_postion" do
+    it "assigns a new task's position to be one more than the existing max position when existing postion" do
+      task = create(:task)
+      new_task = Task.new_with_position({ title: "new task" })
+      new_task.save
+      expect(Task.maximum(:position)).to eq(1)
+    end
+
+    it "assigns a new task's position to 0 when there are no tasks yet" do
+      new_task = Task.new_with_position({ title: "new task" })
+      new_task.save
+      expect(Task.maximum(:position)).to eq(0)
+    end
+  end
 end

@@ -10,6 +10,7 @@ class Task < ApplicationRecord
   scope :order_by_position, -> { order(position: :asc) }
 
   def self.new_with_position(task_params)
-    new(task_params.merge(position: Task.maximum(:position) + 1))
+    curr_max = Task.maximum(:position) || -1
+    new(task_params.merge(position: curr_max + 1))
   end
 end
