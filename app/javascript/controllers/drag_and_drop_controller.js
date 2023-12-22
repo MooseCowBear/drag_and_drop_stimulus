@@ -113,14 +113,14 @@ export default class extends Controller {
 
   getIdsAndPositions(items, lowerBound, upperBound, offset) {
     return items.reduce(
-      (filtered, item) => {
+      (result, item) => {
         if (
           this.between(lowerBound, upperBound, parseInt(item.dataset.position))
         ) {
-          filtered.ids.push(parseInt(item.getAttribute("data-resource-id")));
-          filtered.positions.push(parseInt(item.dataset.position) + offset);
+          result.ids.push(parseInt(item.getAttribute("data-resource-id")));
+          result.positions.push(parseInt(item.dataset.position) + offset);
         }
-        return filtered;
+        return result;
       },
       { ids: [], positions: [] }
     );
