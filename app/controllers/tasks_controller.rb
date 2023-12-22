@@ -22,7 +22,7 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       if @task.save
-        format.html { redirect_to tasks_url, notice: "Task was successfully created." }
+        format.html { redirect_to root_url, notice: "Task was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
       end
@@ -46,7 +46,7 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       format.turbo_stream { render turbo_stream: turbo_stream.remove("#{helpers.dom_id(@task)}_container") }
-      format.html { redirect_to tasks_url, notice: "Task was successfully destroyed." }
+      format.html { redirect_to root_url, notice: "Task was successfully destroyed." }
     end
   end
 
