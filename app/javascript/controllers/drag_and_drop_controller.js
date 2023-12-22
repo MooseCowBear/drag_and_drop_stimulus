@@ -40,9 +40,10 @@ export default class extends Controller {
       return true;
     }
 
-    const newPosition = this.setNewPosition(dropTarget, draggedItem);
+    this.setNewPosition(dropTarget, draggedItem);
 
-    const updates = this.getUpdates(draggedItem, newPosition);
+    const updates = this.getUpdates(draggedItem, dropTarget);
+    console.log("updates to send", updates);
 
     e.preventDefault();
   }
@@ -55,46 +56,45 @@ export default class extends Controller {
   }
 
   setNewPosition(target, item) {
-    // returning position of target so we can use it to update the backend
     const relativePosition = target.compareDocumentPosition(item);
     if (relativePosition == Node.DOCUMENT_POSITION_FOLLOWING) {
       target.insertAdjacentElement("beforebegin", item);
     } else if (relativePosition == Node.DOCUMENT_POSITION_PRECEDING) {
       target.insertAdjacentElement("afterend", item);
     }
-    return parseInt(target.dataset.position);
   }
 
-  getUpdates(draggedItem, endPosition) {
+  getUpdates(draggedItem, dropTarget) {
+    console.log(draggedItem, dropTarget);
+    const endPosition = parseInt(dropTarget.dataset.position);
     const startPosition = parseInt(draggedItem.dataset.position);
     const items = [...draggedItem.parentElement.children];
-    const ids = [draggedItem.getAttribute("data-resource-id")];
-    const newPositions = [endPosition];
+    let updates = null;
 
     console.log(startPosition, endPosition);
 
     if (startPosition == endPosition) {
-      return null;
+      return updates;
     } else if (startPosition < endPosition) {
-      this.getIdsAndPositions(
+      updates = this.getIdsAndPositions(
         items,
         startPosition + 1,
         endPosition,
-        -1,
-        ids,
-        newPositions
+        -1
       );
     } else {
-      this.getIdsAndPositions(
+      updates = this.getIdsAndPositions(
         items,
         endPosition,
         startPosition - 1,
-        1,
-        ids,
-        newPositions
+        1
       );
     }
-    return { ids, newPositions };
+
+    updates.ids.push(resourceID);
+    updates.positions.push(endPosition);
+
+    return updates;
   }
 
   between(lower, higher, val) {
@@ -104,19 +104,20 @@ export default class extends Controller {
     return false;
   }
 
-  getIdsAndPositions(
-    items,
-    lowerBound,
-    upperBound,
-    offset,
-    idsArr,
-    positionsArr
-  ) {
-    for (let i = 0; i < items.length; i++) {
-      if (this.between(lowerBound, upperBound, items[i].dataset.position)) {
-        idsArr.push(items[i].getAttribute("data-resource-id"));
-        positionsArr.push(parseInt(items[i].dataset.position) + offset);
-      }
-    }
+  getIdsAndPositions(items, lowerBound, upperBound, offset) {
+    const res = items.reduce(
+      (filtered, item) => {
+        if (
+          this.between(lowerBound, upperBound, parseInt(item.dataset.position))
+        ) {
+          filtered.ids.push(item.getAttribute("data-resource-id"));
+          filtered.positions.push(parseInt(item.dataset.position) + offset);
+        }
+        return filtered;
+      },
+      { ids: [], positions: [] }
+    );
+    console.log(res);
+    return res;
   }
 }
