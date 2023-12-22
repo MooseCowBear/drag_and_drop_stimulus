@@ -1,17 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 
 let resourceID;
-let url;
 
 // Connects to data-controller="drag-and-drop"
 export default class extends Controller {
-  connect() {
-    console.log("controller is connected");
-  }
+  connect() {}
 
   dragStart(e) {
     resourceID = e.target.getAttribute("data-resource-id");
-    url = e.target.getAttribute("data-url");
     e.dataTransfer.effectAllowed = "move";
   }
 
@@ -43,7 +39,20 @@ export default class extends Controller {
     this.setNewPosition(dropTarget, draggedItem);
 
     const updates = this.getUpdates(draggedItem, dropTarget);
-    console.log("updates to send", updates);
+
+    if (updates) {
+      const token = document.querySelector('meta[name="csrf-token"]').content;
+      const url = "/drag";
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "X-CSRF-Token": token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates),
+      });
+    }
 
     e.preventDefault();
   }
@@ -65,13 +74,10 @@ export default class extends Controller {
   }
 
   getUpdates(draggedItem, dropTarget) {
-    console.log(draggedItem, dropTarget);
     const endPosition = parseInt(dropTarget.dataset.position);
     const startPosition = parseInt(draggedItem.dataset.position);
     const items = [...draggedItem.parentElement.children];
     let updates = null;
-
-    console.log(startPosition, endPosition);
 
     if (startPosition == endPosition) {
       return updates;
@@ -90,10 +96,11 @@ export default class extends Controller {
         1
       );
     }
-
-    updates.ids.push(resourceID);
+    updates.ids.push(parseInt(resourceID));
     updates.positions.push(endPosition);
 
+    // for making the drag controller general, assumes that parent elem has id = plural model name
+    updates.category = draggedItem.getAttribute("data-parent");
     return updates;
   }
 
@@ -105,19 +112,17 @@ export default class extends Controller {
   }
 
   getIdsAndPositions(items, lowerBound, upperBound, offset) {
-    const res = items.reduce(
+    return items.reduce(
       (filtered, item) => {
         if (
           this.between(lowerBound, upperBound, parseInt(item.dataset.position))
         ) {
-          filtered.ids.push(item.getAttribute("data-resource-id"));
+          filtered.ids.push(parseInt(item.getAttribute("data-resource-id")));
           filtered.positions.push(parseInt(item.dataset.position) + offset);
         }
         return filtered;
       },
       { ids: [], positions: [] }
     );
-    console.log(res);
-    return res;
   }
 }
