@@ -5,6 +5,9 @@ require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+
+require "capybara/rspec"
+require "capybara/cuprite"
 # Add additional requires below this line. Rails is not loaded until this point!
 
 Dir[Rails.root.join('spec/support/*.rb')].each { |f| require f } # for factory bot
@@ -31,6 +34,7 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = Rails.root.join('spec/fixtures')
@@ -62,4 +66,28 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+end
+
+Capybara.server = :puma
+Capybara.default_max_wait_time = 10
+Capybara.disable_animation = true
+
+Capybara.javascript_driver = :cuprite
+Capybara.register_driver(:cuprite) do |app|
+  Capybara::Cuprite::Driver.new(app, inspector: ENV['INSPECTOR'])
+end
+
+RSpec.configure do |config|
+  config.before(:each, type: :system) do
+    driven_by(:cuprite, screen_size: [1440, 810], options: {
+      js_errors: true,
+      headless: %w[0 false].exclude?(ENV["HEADLESS"]),
+      slowmo: ENV["SLOWMO"]&.to_f,
+      process_timeout: 15,
+      timeout: 20,
+      browser_options: ENV["DOCKER"] ? { "no-sandbox" => nil } : {}
+    })
+  end
+
+  config.filter_gems_from_backtrace("capybara", "cuprite", "ferrum")
 end
