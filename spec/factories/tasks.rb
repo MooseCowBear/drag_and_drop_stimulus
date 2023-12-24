@@ -11,4 +11,10 @@ FactoryBot.define do
       completed { true }
     end
   end
+
+  factory :task_list, class: "Task" do
+    sequence(:title) { |i| "Task#{i}" }
+    description { "task description" }
+    sequence(:position) { |i| i - 1}
+  end
 end
