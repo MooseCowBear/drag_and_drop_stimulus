@@ -4,7 +4,7 @@
                     drop->drag-and-drop#drop
                     dragend->drag-and-drop#dragEnd" %>
 
-<%= content_tag(:div, class: "draggable", draggable: true, data: {
+<%= content_tag(:div, draggable: true, data: {
     controller: "drag-and-drop",
     action: drag_actions,
     resource_id: task.id,
