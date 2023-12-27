@@ -24,10 +24,7 @@ export default class extends Controller {
   }
 
   drop(e) {
-    const dropTarget = this.findDropTarget(
-      e.target,
-      e.target.getAttribute("data-parent")
-    );
+    const dropTarget = this.findDropTarget(e.target);
     const draggedItem = document.querySelector(
       `[data-resource-id="${resourceID}"]`
     );
@@ -38,9 +35,7 @@ export default class extends Controller {
 
     this.setNewPosition(dropTarget, draggedItem);
 
-    const updates = this.getUpdates(draggedItem, dropTarget);
-
-    if (updates) {
+    if (dropTarget != draggedItem) {
       const token = document.querySelector('meta[name="csrf-token"]').content;
       const url = "/drag";
 
@@ -50,18 +45,17 @@ export default class extends Controller {
           "X-CSRF-Token": token,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify(this.getUpdate(draggedItem, dropTarget)),
       });
     }
-
     e.preventDefault();
   }
 
-  findDropTarget(elem, parentId) {
-    if (elem == null || elem.id == parentId) {
+  findDropTarget(elem) {
+    if (elem == null) {
       return null;
     }
-    return elem.closest(".draggable");
+    return elem.closest('[draggable="true"]');
   }
 
   setNewPosition(target, item) {
@@ -73,56 +67,11 @@ export default class extends Controller {
     }
   }
 
-  getUpdates(draggedItem, dropTarget) {
-    const endPosition = parseInt(dropTarget.dataset.position);
-    const startPosition = parseInt(draggedItem.dataset.position);
-    const items = [...draggedItem.parentElement.children];
-    let updates = null;
-
-    if (startPosition == endPosition) {
-      return updates;
-    } else if (startPosition < endPosition) {
-      updates = this.getIdsAndPositions(
-        items,
-        startPosition + 1,
-        endPosition,
-        -1
-      );
-    } else {
-      updates = this.getIdsAndPositions(
-        items,
-        endPosition,
-        startPosition - 1,
-        1
-      );
-    }
-    updates.ids.push(parseInt(resourceID));
-    updates.positions.push(endPosition);
-
-    // for making the drag controller general, assumes that parent elem has id = plural model name
-    updates.category = draggedItem.getAttribute("data-parent");
-    return updates;
-  }
-
-  between(lower, higher, val) {
-    if (val >= lower && val <= higher) {
-      return true;
-    }
-    return false;
-  }
-
-  getIdsAndPositions(items, lowerBound, upperBound, offset) {
-    return items.reduce(
-      (result, item) => {
-        if (
-          this.between(lowerBound, upperBound, parseInt(item.dataset.position))
-        ) {
-          result.ids.push(parseInt(item.getAttribute("data-resource-id")));
-          result.positions.push(parseInt(item.dataset.position) + offset);
-        }
-        return result;
-      },
-      { ids: [], positions: [] }
-    );
+  getUpdate(draggedItem, dropTarget) {
+    return {
+      category: draggedItem.getAttribute("data-parent"),
+      position: parseInt(dropTarget.dataset.position),
+      id: resourceID,
+    };
   }
 }
