@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Drags", type: :request do
-  describe "POST /drag" do
+  describe "POST /drag" do 
     before(:each) do
-      @task0 = create(:task)
+      @task0 = create(:task, position: 0)
       @task1 = create(:task, position: 1)
       @task2 = create(:task, position: 2)
     end
 
     it "updates the positions of tasks whose ids are included in params" do
-      post drag_url, params: {drag: { category: "tasks", ids: [@task0.id, @task1.id], positions: [1, 0] } }
+      post drag_url, params: {drag: { category: "tasks", id: @task0.id, position: 1 } }
       @task0.reload
       @task1.reload
       expect(@task0.position).to eq(1)
@@ -17,7 +17,7 @@ RSpec.describe "Drags", type: :request do
     end
 
     it "does not update tasks whose ids are not included in params" do
-      post drag_url, params: {drag: { category: "tasks", ids: [@task0.id, @task1.id], positions: [1, 0] } }
+      post drag_url, params: {drag: { category: "tasks", id: @task0.id, position: 1 } }
       @task2.reload
       expect(@task2.position).to eq(2)
     end

@@ -8,7 +8,6 @@ class DragController < ApplicationController
   private
 
   def drag_params
-    pp params
     params.require(:drag).permit(:category, :id, :position)
   end
 

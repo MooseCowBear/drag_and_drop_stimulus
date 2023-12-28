@@ -14,7 +14,7 @@ module Draggable
 
     def update_positions(strong_params)
       dragged_record = find(strong_params[:id])
-      end_position = strong_params[:position]
+      end_position = strong_params[:position].to_i
       start_position = dragged_record.position
 
       transaction do
