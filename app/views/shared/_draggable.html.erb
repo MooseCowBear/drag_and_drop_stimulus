@@ -7,9 +7,9 @@
 <%= content_tag(:div, draggable: true, data: {
     controller: "drag-and-drop",
     action: drag_actions,
-    resource_id: task.id,
-    parent: "tasks",
-    position: task.position
+    resource_id: element.id,
+    parent: parent,
+    position: element.position
 }) do %>
-  <%= render task %>
+  <%= render element_partial, partial_element(element) => element %>
 <% end %>
