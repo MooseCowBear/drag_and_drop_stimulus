@@ -1,6 +1,9 @@
 require 'rails_helper'
+require 'concerns/draggable_spec'
 
 RSpec.describe Task, type: :model do
+  it_behaves_like 'draggable'
+
   it "is valid when it has a title" do
     task = create(:task)
     expect(task).to be_valid
@@ -30,30 +33,4 @@ RSpec.describe Task, type: :model do
       expect(res.first).to eq(incompleted_task)
     end
   end 
-
-  describe ".new_with_postion" do
-    it "assigns a new task's position to be one more than the existing max position when existing postion" do
-      task = create(:task)
-      new_task = Task.new_with_position({ title: "new task" })
-      new_task.save
-      expect(Task.maximum(:position)).to eq(1)
-    end
-
-    it "assigns a new task's position to 0 when there are no tasks yet" do
-      new_task = Task.new_with_position({ title: "new task" })
-      new_task.save
-      expect(Task.maximum(:position)).to eq(0)
-    end
-  end
-
-  describe ".order_by_position" do
-    it "returns tasks in ascending order of position" do
-      task = create(:task)
-      task1 = create(:task, position: 1)
-      task2 = create(:task, position: 2)
-      res = Task.order_by_position
-      expect(res.first.position).to be <= res.second.position
-      expect(res.second.position).to be <= res.last.position
-    end
-  end
 end

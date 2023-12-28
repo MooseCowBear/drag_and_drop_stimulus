@@ -25,9 +25,7 @@ module Draggable
 
     def find_and_update_other_positions(start_position, end_position)
       offset = offset(start_position, end_position) 
-
       range = positions(start_position, end_position)
-      pp range
 
       records_by_positions(range).each do |record|
         update_position(record, offset)
@@ -35,7 +33,7 @@ module Draggable
     end
 
     def update_position(record, offset)
-      update(record.id, position: record.position + offset) 
+      record.update(position: record.position + offset) 
     end
 
     def records_by_positions(range)
