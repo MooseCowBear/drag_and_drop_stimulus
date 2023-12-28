@@ -1,24 +1,46 @@
-# README
+# Drag and drop Stimulus controller
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A drag and drop Stimulus controller to reorder a collection of records. Controller sends a fetch request to the backend so that a table's position column is updated.
 
-Things you may want to cover:
+## Making a model draggable
 
-* Ruby version
+To make a model drag-and-droppable, you only need to add a position column to the relevant table and `include Draggable` in the model.
 
-* System dependencies
+The Draggable concern includes a method that adds a position to a new record.
 
-* Configuration
+```
+# app/models/concerns/draggable
 
-* Database creation
+def new_with_position(params)
+  curr_max = maximum(:position) || -1
+  new(params.merge(position: curr_max + 1))
+end
+```
 
-* Database initialization
+The create action of any controller for draggable models should use this method to ensure positions are unique within the model.
 
-* How to run the test suite
+## Updating position after a drag and drop
 
-* Services (job queues, cache servers, search engines, etc.)
+The Stimulus Controller's fetch request includes a category, which is taken from the id of collection's parent element. On the backend, the Drag Controller identifies the model to update with
 
-* Deployment instructions
+```
+# app/controllers/drag_controller
 
-* ...
+def get_model(category)
+  Object.const_get(category.singularize.capitalize)
+end
+```
+
+So, for example, any of "task", "Task", "tasks", or "Tasks" would be an acceptable id for the parent container of a collection of `Task` instances, but "tasks_container" would not.
+
+## Generalizing the draggable partial
+
+In order to use a shared partial to add the drag-and-drop Stimulus controller, we pass not only the model instance but also the partial path associated with the model. This allows us to render the model instance's partial within the draggable partial with: 
+
+```
+# app/views/shared/_draggable.html.erb
+
+<%= render element_partial, partial_element(element) => element %>
+```
+
+where `partial_element` returns the class name of the model instance as a lowercase symbol. 
