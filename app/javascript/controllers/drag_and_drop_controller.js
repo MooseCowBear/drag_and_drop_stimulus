@@ -69,7 +69,7 @@ export default class extends Controller {
 
   getUpdate(draggedItem, dropTarget) {
     return {
-      category: draggedItem.getAttribute("data-parent"),
+      category: draggedItem.parentElement.id,
       position: parseInt(dropTarget.dataset.position),
       id: resourceID,
     };
