@@ -1,6 +1,6 @@
 # Drag and drop Stimulus controller
 
-A drag and drop Stimulus controller to reorder a collection of records. Controller sends a fetch request to the backend so that a table's position column is updated.
+A drag and drop Stimulus controller to reorder a collection of records. Controller sends a fetch request to the backend to update position in the database.
 
 ## Making a model draggable
 
