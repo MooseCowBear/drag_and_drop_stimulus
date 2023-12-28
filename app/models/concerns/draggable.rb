@@ -19,7 +19,7 @@ module Draggable
 
       transaction do
         find_and_update_other_positions(start_position, end_position)
-        dragged_record.update(strong_params.except(:category))
+        dragged_record.update!(strong_params.except(:category))
       end
     end
 
@@ -33,7 +33,7 @@ module Draggable
     end
 
     def update_position(record, offset)
-      record.update(position: record.position + offset) 
+      record.update!(position: record.position + offset) 
     end
 
     def records_by_positions(range)
