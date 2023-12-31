@@ -1,13 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 
-let resourceID;
-
 // Connects to data-controller="drag-and-drop"
 export default class extends Controller {
   connect() {}
 
   dragStart(e) {
-    resourceID = e.target.getAttribute("data-resource-id");
+    const resourceID = e.target.getAttribute("data-resource-id");
+    e.dataTransfer.clearData();
+    e.dataTransfer.setData("text/plain", resourceID);
     e.dataTransfer.effectAllowed = "move";
   }
 
@@ -25,8 +25,9 @@ export default class extends Controller {
 
   drop(e) {
     const dropTarget = this.findDropTarget(e.target);
+    const itemId = e.dataTransfer.getData("text");
     const draggedItem = document.querySelector(
-      `[data-resource-id="${resourceID}"]`
+      `[data-resource-id="${itemId}"]`
     );
 
     if (draggedItem === null || dropTarget === null) {
@@ -45,7 +46,7 @@ export default class extends Controller {
           "X-CSRF-Token": token,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.getUpdate(draggedItem, dropTarget)),
+        body: JSON.stringify(this.getUpdate(draggedItem, dropTarget, itemId)),
       });
     }
     e.preventDefault();
@@ -67,11 +68,11 @@ export default class extends Controller {
     }
   }
 
-  getUpdate(draggedItem, dropTarget) {
+  getUpdate(draggedItem, dropTarget, id) {
     return {
       category: draggedItem.parentElement.id,
       position: parseInt(dropTarget.dataset.position),
-      id: resourceID,
+      id: id,
     };
   }
 }
