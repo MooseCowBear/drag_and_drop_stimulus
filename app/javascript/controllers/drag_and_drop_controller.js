@@ -5,9 +5,11 @@ export default class extends Controller {
   connect() {}
 
   dragStart(e) {
-    const resourceID = e.target.getAttribute("data-resource-id");
     e.dataTransfer.clearData();
-    e.dataTransfer.setData("text/plain", resourceID);
+    e.dataTransfer.setData(
+      "text/plain",
+      e.target.getAttribute("data-resource-id")
+    );
     e.dataTransfer.effectAllowed = "move";
   }
 
