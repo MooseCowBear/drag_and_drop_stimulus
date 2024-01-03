@@ -44,7 +44,7 @@ export default class extends Controller {
           "X-CSRF-Token": token,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.getUpdate(draggedItem, dropTarget, itemId)),
+        body: JSON.stringify(this.getUpdate(draggedItem, itemId)),
       });
     }
     e.preventDefault();
@@ -63,10 +63,10 @@ export default class extends Controller {
     }
   }
 
-  getUpdate(draggedItem, dropTarget, id) {
+  getUpdate(draggedItem, id) {
     return {
       category: draggedItem.parentElement.id,
-      position: parseInt(dropTarget.dataset.position),
+      position: [...draggedItem.parentElement.children].indexOf(draggedItem),
       id: id,
     };
   }
