@@ -5,7 +5,6 @@ export default class extends Controller {
   connect() {}
 
   dragStart(e) {
-    e.dataTransfer.clearData();
     e.dataTransfer.setData(
       "text/plain",
       e.target.getAttribute("data-resource-id")
@@ -19,6 +18,7 @@ export default class extends Controller {
 
   dragOver(e) {
     e.preventDefault();
+    return false;
   }
 
   dragEnd(e) {
@@ -31,10 +31,6 @@ export default class extends Controller {
     const draggedItem = document.querySelector(
       `[data-resource-id="${itemId}"]`
     );
-
-    if (draggedItem === null || dropTarget === null) {
-      return true;
-    }
 
     this.setNewPosition(dropTarget, draggedItem);
 
@@ -55,9 +51,6 @@ export default class extends Controller {
   }
 
   findDropTarget(elem) {
-    if (elem == null) {
-      return null;
-    }
     return elem.closest('[draggable="true"]');
   }
 

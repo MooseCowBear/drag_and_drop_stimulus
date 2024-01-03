@@ -1,7 +1,7 @@
 class DragController < ApplicationController
   def update
     model = get_model(drag_params[:category])
-    model.update_positions(drag_params)
+    model.update_positions(drag_params.except(:category))
     head :no_content
   end
 

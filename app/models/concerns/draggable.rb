@@ -12,14 +12,14 @@ module Draggable
       new(params.merge(position: curr_max + 1))
     end
 
-    def update_positions(strong_params)
-      dragged_record = find(strong_params[:id])
-      end_position = strong_params[:position].to_i
+    def update_positions(params)
+      dragged_record = find(params[:id])
       start_position = dragged_record.position
+      end_position = params[:position].to_i
 
       transaction do
         find_and_update_other_positions(start_position, end_position)
-        dragged_record.update!(strong_params.except(:category))
+        dragged_record.update!(params)
       end
     end
 
@@ -46,9 +46,9 @@ module Draggable
 
     def positions(start_position, end_position)
       if start_position < end_position
-        (start_position + 1..end_position)
+        start_position + 1..end_position
       else 
-        (end_position..start_position - 1)
+        end_position..start_position - 1
       end
     end
   end
