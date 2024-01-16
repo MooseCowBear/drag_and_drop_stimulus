@@ -12,18 +12,17 @@ module Draggable
       new(params.merge(position: curr_max + 1))
     end
 
-    def update_positions(params)
-      dragged_record = find(params[:id])
+    def update_positions(id, end_position)
+      dragged_record = find(id)
       start_position = dragged_record.position
-      end_position = params[:position].to_i
 
       transaction do
-        find_and_update_other_positions(start_position, end_position)
-        dragged_record.update!(params)
+        update_other_positions(start_position, end_position)
+        dragged_record.update!(position: end_position)
       end
     end
 
-    def find_and_update_other_positions(start_position, end_position)
+    def update_other_positions(start_position, end_position)
       offset = offset(start_position, end_position) 
       range = positions(start_position, end_position)
 

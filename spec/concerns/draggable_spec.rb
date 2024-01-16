@@ -40,25 +40,25 @@ RSpec.shared_examples_for "draggable" do
       @test_params = { id: @dragged_object.id, position: 1 }
     end
 
-    it "calls find_and_update_other_positions" do
-      expect(model).to receive(:find_and_update_other_positions).with(0, 1)
-      model.update_positions(@test_params)   
+    it "calls update_other_positions" do
+      expect(model).to receive(:update_other_positions).with(0, 1)
+      model.update_positions(@test_params[:id], @test_params[:position])   
     end
 
     it "updates position of dragged object" do
-      allow(model).to receive(:find_and_update_other_positions)
-      model.update_positions(@test_params)   
+      allow(model).to receive(:update_other_positions)
+      model.update_positions(@test_params[:id], @test_params[:position])   
       @dragged_object.reload
       expect(@dragged_object.position).to eq(1)
     end
   end
 
-  describe ".find_and_update_other_positions" do
+  describe ".update_other_positions" do
     it "calls update_position for each record in range" do
       allow(model).to receive(:offset).and_return(1)
       allow(model).to receive(:records_by_positions).and_return([double(), double()])
       expect(model).to receive(:update_position).twice 
-      model.find_and_update_other_positions(2, 0)
+      model.update_other_positions(2, 0)
     end
   end
 
